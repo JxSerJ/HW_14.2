@@ -26,7 +26,7 @@ def get_by_years(year1: int, year2: int):
 
 @application.route("/rating/<rating>")
 def get_by_rating(rating: str):
-    pass
+    return jsonify(DB_Obj.get_db_data_by_rating(rating))
 
 
 @application.route("/genre/<genre>")

@@ -6,11 +6,13 @@ class DBHandler:
 
     def __init__(self, db_path: str):
         self.db_path = db_path
-        pass
+        print(f"SQL Data Base handler initialized with db: {db_path}")
 
     def db_connector(self, query: str, values: Iterable | None) -> list:
         with sqlite3.connect(self.db_path) as connection:
             cursor = connection.cursor()
+            if values is None:
+                return cursor.execute(query).fetchall()
             return cursor.execute(query % values).fetchall()
 
     def get_db_data_by_title(self, title: str) -> dict | str:
@@ -55,13 +57,51 @@ class DBHandler:
         for row in db_fetch_result:
             data.append({
                 "title": row[0],
-                "release_year": row[1],
+                "release_year": row[1]
             })
 
         return data
 
-    def get_db_data_by_rating(self, rating: str) -> list[dict]:
-        pass
+    def get_db_data_by_rating(self, rating: str) -> list[dict] | str:
+
+        query_primary = ("SELECT rating "
+                         "FROM netflix "
+                         "WHERE rating is not null "
+                         "AND rating != '' "
+                         "GROUP BY rating")
+
+        allowed_ratings = []
+        allowed_ratings_raw = self.db_connector(query_primary, None)
+
+        for rating_str in allowed_ratings_raw:
+            allowed_ratings.append(rating_str[0])
+
+        try:
+            if rating not in allowed_ratings:
+                raise ValueError
+        except ValueError:
+            return "Rating not found in database"
+
+        query = ("SELECT `title`, `rating`, `description` "
+                 "FROM netflix "
+                 "WHERE `rating` == '%s' "
+                 "AND `type` = 'Movie' "
+                 "LIMIT 100 ")
+
+        values = rating
+
+        db_fetch_result = self.db_connector(query, values)
+
+        data = []
+
+        for row in db_fetch_result:
+            data.append({
+                "title": row[0],
+                "rating": row[1],
+                "description": row[2]
+            })
+
+        return data
 
     def get_db_data_by_genre(self, genre: str) -> list[dict]:
         pass
