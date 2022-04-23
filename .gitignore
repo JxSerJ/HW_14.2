@@ -1,0 +1,4 @@
+/310_venv/
+/.idea/
+*.pyc
+.pytest_cache
