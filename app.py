@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 
 from utils import DBHandler
 
@@ -16,12 +16,12 @@ def navigation_page():
 
 @application.route("/movie/<title>")
 def get_by_title(title: str):
-    pass
+    return jsonify(DB_Obj.get_db_data_by_title(title))
 
 
 @application.route("/movie/<int:year1>/to/<int:year2>")
 def get_by_years(year1: int, year2: int):
-    pass
+    return jsonify(DB_Obj.get_db_data_by_years(year1, year2))
 
 
 @application.route("/rating/<rating>")
