@@ -11,7 +11,7 @@ DB_Obj = DBHandler(application.config.get("DB_PATH"))
 
 @application.route("/")
 def navigation_page():
-    pass
+    return "INDEX PAGE"
 
 
 @application.route("/movie/<title>")
@@ -26,7 +26,10 @@ def get_by_years(year1: int, year2: int):
 
 @application.route("/rating/<rating>")
 def get_by_rating(rating: str):
-    return jsonify(DB_Obj.get_db_data_by_rating(rating))
+    return_ = DB_Obj.get_db_data_by_rating(rating)
+    if type(return_) == list:
+        return jsonify(return_)
+    return return_
 
 
 @application.route("/genre/<genre>")

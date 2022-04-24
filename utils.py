@@ -1,5 +1,5 @@
 import sqlite3
-from typing import Iterable
+from typing import Iterable, Any
 
 
 class DBHandler:
@@ -8,7 +8,7 @@ class DBHandler:
         self.db_path = db_path
         print(f"SQL Data Base handler initialized with db: {db_path}")
 
-    def db_connector(self, query: str, values: Iterable | None) -> list:
+    def db_connector(self, query: str, values: Iterable[Any] | None = None) -> list:
         with sqlite3.connect(self.db_path) as connection:
             cursor = connection.cursor()
             if values is None:
@@ -73,22 +73,31 @@ class DBHandler:
         allowed_ratings = []
         allowed_ratings_raw = self.db_connector(query_primary, None)
 
+        allowed_user_groups = {'children': ['G'], 'family': ['G', 'PG', 'PG-13'], 'adult': ['R', 'NC-17']}
+
         for rating_str in allowed_ratings_raw:
             allowed_ratings.append(rating_str[0])
-
         try:
-            if rating not in allowed_ratings:
+            if rating in allowed_ratings:
+                query = ("SELECT `title`, `rating`, `description` "
+                         "FROM netflix "
+                         "WHERE `rating` == '%s' "
+                         "AND `type` = 'Movie' "
+                         "LIMIT 100 ")
+                values = rating
+
+            elif rating in allowed_user_groups.keys():
+                rating_list = "'" + "', '".join(allowed_user_groups[rating]) + "'"
+                query = ("SELECT `title`, `rating`, `description` "
+                         "FROM netflix "
+                         f"WHERE `rating` IN ({rating_list}) "  # TODO idk how to implemet it without f-string (%s and ? doesn't work)
+                         "AND `type` = 'Movie' "
+                         "LIMIT 100 ")
+                values = None
+            else:
                 raise ValueError
         except ValueError:
-            return "Rating not found in database"
-
-        query = ("SELECT `title`, `rating`, `description` "
-                 "FROM netflix "
-                 "WHERE `rating` == '%s' "
-                 "AND `type` = 'Movie' "
-                 "LIMIT 100 ")
-
-        values = rating
+            return "Rating or rating group not found in database. Or you just tried SQL-injection. This is not good."
 
         db_fetch_result = self.db_connector(query, values)
 
