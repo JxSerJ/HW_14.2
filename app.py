@@ -48,10 +48,8 @@ def get_by_genre(genre: str):
 
 @application.route("/movie/<actor1>/<actor2>")
 def get_by_actors(actor1: str, actor2: str):
-    return_ = 0
-    if type(return_) == list:
-        return jsonify(return_)
-    return return_
+    return_ = DB_Obj.get_db_data_by_actor_names(actor1, actor2)
+    return jsonify(return_)
 
 
 @application.route("/movie/<entry_type>/<int:year>/<genre>")

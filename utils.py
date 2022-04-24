@@ -21,7 +21,7 @@ class DBHandler:
                  "FROM netflix "
                  "WHERE `title` LIKE '%s' "
                  "AND `type` = 'Movie' "
-                 "LIMIT 1 ")
+                 "LIMIT 10 ")
 
         values = '%' + title + '%'
 
@@ -151,26 +151,34 @@ class DBHandler:
                  "FROM netflix "
                  "WHERE `cast` IS NOT '' "
                  "AND `cast` IS NOT NULL "
-                 "LIMIT 5 ")
+                 "AND `cast` LIKE '%s' "
+                 "AND `cast` LIKE '%s' "
+                 "LIMIT 100 ")
 
-        values = None
+        values = ('%' + actor_name1 + '%', '%' + actor_name2 + '%')
 
         db_fetch_result = self.db_connector(query, values)
 
         data = []
-
-        print(db_fetch_result)
+        actors = []
 
         for row in db_fetch_result:
-            data.append({
-                "cast": row[0],
-                "title": row[1]
-            })
+            row_list = row[0].split(', ')
 
-        if len(data) == 0:
+            for row_list_entry in row_list:
+                if row_list_entry != actor_name1 and row_list_entry != actor_name2:
+                    data.append(row_list_entry)
+
+        for actor in data:
+            if data.count(actor) > 2:
+                actors.append(actor)
+
+        if len(actors) == 0:
             return "Data not found in database"
 
-        return data
+        actors = list(set(actors))
+
+        return actors
 
     def get_db_data_by_type_year_genre(self, entry_type: str, release_year: int, genre: str) -> list[dict] | str:
 
