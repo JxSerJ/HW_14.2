@@ -56,11 +56,11 @@ def get_by_actors(actor1: str, actor2: str):
 
 @application.route("/movie/<entry_type>/<int:year>/<genre>")
 def get_by_type_year_genre(entry_type: str, year: int, genre: str):
-    return_ = 0
+    return_ = DB_Obj.get_db_data_by_type_year_genre(entry_type, year, genre)
     if type(return_) == list:
         return jsonify(return_)
     return return_
 
 
 if __name__ == "__main__":
-    application.run()
+    application.run(port=8001)

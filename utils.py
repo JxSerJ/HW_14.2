@@ -145,8 +145,61 @@ class DBHandler:
 
         return data
 
-    def get_db_data_by_actor_names(self, actor_name1: str, actor_name2: str) -> list:
-        pass
+    def get_db_data_by_actor_names(self, actor_name1: str = None, actor_name2: str = None) -> list | str:
 
-    def get_db_data_by_type_year_genre(self, entry_type: str, release_year: int, genre: str) -> list[dict]:
-        pass
+        query = ("SELECT `cast`, `title` "
+                 "FROM netflix "
+                 "WHERE `cast` IS NOT '' "
+                 "AND `cast` IS NOT NULL "
+                 "LIMIT 5 ")
+
+        values = None
+
+        db_fetch_result = self.db_connector(query, values)
+
+        data = []
+
+        print(db_fetch_result)
+
+        for row in db_fetch_result:
+            data.append({
+                "cast": row[0],
+                "title": row[1]
+            })
+
+        if len(data) == 0:
+            return "Data not found in database"
+
+        return data
+
+    def get_db_data_by_type_year_genre(self, entry_type: str, release_year: int, genre: str) -> list[dict] | str:
+
+        query = ("SELECT `title`, `type`, `listed_in`, `release_year`, `description` "
+                 "FROM netflix "
+                 "WHERE `listed_in` IS NOT '' "
+                 "AND `listed_in` IS NOT NULL "
+                 "AND `listed_in` LIKE '%s' "
+                 "AND `type` LIKE '%s' "
+                 "AND `release_year` = '%s' "
+                 "ORDER BY `release_year` DESC, date_added DESC "
+                 "LIMIT 500 ")
+
+        values = ('%' + genre + '%', entry_type, release_year)
+
+        db_fetch_result = self.db_connector(query, values)
+
+        data = []
+
+        for row in db_fetch_result:
+            data.append({
+                "title": row[0],
+                "type": row[1],
+                "release_year": row[3],
+                "genre": row[2],
+                "description": row[4]
+            })
+
+        if len(data) == 0:
+            return "Data not found in database"
+
+        return data
