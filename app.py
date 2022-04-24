@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 
 from utils import DBHandler
 
@@ -11,7 +11,7 @@ DB_Obj = DBHandler(application.config.get("DB_PATH"))
 
 @application.route("/")
 def navigation_page():
-    return "INDEX PAGE"
+    return render_template("index.html")
 
 
 @application.route("/movie/<title>")

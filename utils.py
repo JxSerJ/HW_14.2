@@ -36,16 +36,20 @@ class DBHandler:
                 "description": db_fetch_result[0][4]
             }
         except IndexError:
-            return "Data not found in database"
+            return "<H1 style='font-family: monospace'>Data not found in database</H1>"
 
         return data
 
     def get_db_data_by_years(self, start_year: int, end_year: int) -> list[dict] | str:
 
+        if start_year > end_year:
+            return "<H1 style='font-family: monospace'>Года наоборот нужно вводить!!1!</H1>"
+
         query = ("SELECT `title`, `release_year` "
                  "FROM netflix "
                  "WHERE `release_year` BETWEEN '%s' AND '%s' "
                  "AND `type` = 'Movie' "
+                 "ORDER BY release_year ASC "
                  "LIMIT 100 ")
 
         values = (start_year, end_year)
@@ -61,7 +65,7 @@ class DBHandler:
             })
 
         if len(data) == 0:
-            return "Data not found in database"
+            return "<H1 style='font-family: monospace'>Data not found in database</H1>"
 
         return data
 
@@ -100,7 +104,7 @@ class DBHandler:
             else:
                 raise ValueError
         except ValueError:
-            return "Rating or rating group not found in database. Or you just tried SQL-injection. This is not good."
+            return "<H1 style='font-family: monospace'>Rating or rating group not found in database. Or you just tried SQL-injection. This is not good.</H1>"
 
         db_fetch_result = self.db_connector(query, values)
 
@@ -141,7 +145,7 @@ class DBHandler:
             })
 
         if len(data) == 0:
-            return "Data not found in database"
+            return "<H1 style='font-family: monospace'>Data not found in database</H1>"
 
         return data
 
@@ -174,7 +178,7 @@ class DBHandler:
                 actors.append(actor)
 
         if len(actors) == 0:
-            return "Data not found in database"
+            return "<H1 style='font-family: monospace'>Data not found in database</H1>"
 
         actors = list(set(actors))
 
@@ -192,7 +196,7 @@ class DBHandler:
                  "ORDER BY `release_year` DESC, date_added DESC "
                  "LIMIT 500 ")
 
-        values = ('%' + genre + '%', entry_type, release_year)
+        values = ('%' + genre + '%', '%' + entry_type + '%', release_year)
 
         db_fetch_result = self.db_connector(query, values)
 
@@ -208,6 +212,6 @@ class DBHandler:
             })
 
         if len(data) == 0:
-            return "Data not found in database"
+            return "<H1 style='font-family: monospace'>Data not found in database</H1>"
 
         return data
