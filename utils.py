@@ -36,11 +36,11 @@ class DBHandler:
                 "description": db_fetch_result[0][4]
             }
         except IndexError:
-            return "Data not found"
+            return "Data not found in database"
 
         return data
 
-    def get_db_data_by_years(self, start_year: int, end_year: int) -> list[dict]:
+    def get_db_data_by_years(self, start_year: int, end_year: int) -> list[dict] | str:
 
         query = ("SELECT `title`, `release_year` "
                  "FROM netflix "
@@ -59,6 +59,9 @@ class DBHandler:
                 "title": row[0],
                 "release_year": row[1]
             })
+
+        if len(data) == 0:
+            return "Data not found in database"
 
         return data
 
@@ -112,8 +115,35 @@ class DBHandler:
 
         return data
 
-    def get_db_data_by_genre(self, genre: str) -> list[dict]:
-        pass
+    def get_db_data_by_genre(self, genre: str) -> list[dict] | str:
+
+        query = ("SELECT `title`, `date_added`, `listed_in`, `description`, `release_year` "
+                 "FROM netflix "
+                 "WHERE `listed_in` IS NOT '' "
+                 "AND `listed_in` IS NOT NULL "
+                 "AND `listed_in` LIKE '%s' "
+                 "AND `type` = 'Movie' "
+                 "ORDER BY `release_year` DESC, date_added DESC "
+                 "LIMIT 10 ")
+
+        values = '%' + genre + '%'
+
+        db_fetch_result = self.db_connector(query, values)
+
+        data = []
+
+        for row in db_fetch_result:
+            data.append({
+                "title": row[0],
+                "release_year": row[4],
+                "genre": row[2],
+                "description": row[3]
+            })
+
+        if len(data) == 0:
+            return "Data not found in database"
+
+        return data
 
     def get_db_data_by_actor_names(self, actor_name1: str, actor_name2: str) -> list:
         pass

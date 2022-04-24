@@ -16,12 +16,18 @@ def navigation_page():
 
 @application.route("/movie/<title>")
 def get_by_title(title: str):
-    return jsonify(DB_Obj.get_db_data_by_title(title))
+    return_ = DB_Obj.get_db_data_by_title(title)
+    if type(return_) == list:
+        return jsonify(return_)
+    return return_
 
 
 @application.route("/movie/<int:year1>/to/<int:year2>")
 def get_by_years(year1: int, year2: int):
-    return jsonify(DB_Obj.get_db_data_by_years(year1, year2))
+    return_ = DB_Obj.get_db_data_by_years(year1, year2)
+    if type(return_) == list:
+        return jsonify(return_)
+    return return_
 
 
 @application.route("/rating/<rating>")
@@ -34,17 +40,26 @@ def get_by_rating(rating: str):
 
 @application.route("/genre/<genre>")
 def get_by_genre(genre: str):
-    pass
+    return_ = DB_Obj.get_db_data_by_genre(genre)
+    if type(return_) == list:
+        return jsonify(return_)
+    return return_
 
 
 @application.route("/movie/<actor1>/<actor2>")
 def get_by_actors(actor1: str, actor2: str):
-    pass
+    return_ = 0
+    if type(return_) == list:
+        return jsonify(return_)
+    return return_
 
 
-@application.route("/movie/<type>/<int:year>/<genre>")
-def get_by_type_year_genre(type: str, year: int, genre: str):
-    pass
+@application.route("/movie/<entry_type>/<int:year>/<genre>")
+def get_by_type_year_genre(entry_type: str, year: int, genre: str):
+    return_ = 0
+    if type(return_) == list:
+        return jsonify(return_)
+    return return_
 
 
 if __name__ == "__main__":
