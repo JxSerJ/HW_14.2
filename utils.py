@@ -187,11 +187,11 @@ class DBHandler:
 
     def get_db_data_by_type_year_genre(self, entry_type: str, release_year: int, genre: str) -> list[dict] | str:
 
-        query = ("SELECT `title`, `type`, `listed_in`, `release_year`, `description` "
+        query = ("SELECT `title`, `type`, `listed_in` AS genre, `release_year`, `description` "
                  "FROM netflix "
-                 "WHERE `listed_in` IS NOT '' "
-                 "AND `listed_in` IS NOT NULL "
-                 "AND `listed_in` LIKE '%s' "
+                 "WHERE `genre` IS NOT '' "
+                 "AND `genre` IS NOT NULL "
+                 "AND `genre` LIKE '%s' "
                  "AND `type` LIKE '%s' "
                  "AND `release_year` = '%s' "
                  "ORDER BY `release_year` DESC, date_added DESC "
