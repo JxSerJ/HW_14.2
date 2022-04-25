@@ -21,7 +21,8 @@ class DBHandler:
                  "FROM netflix "
                  "WHERE `title` LIKE '%s' "
                  "AND `type` = 'Movie' "
-                 "LIMIT 10 ")
+                 "ORDER BY `release_year` DESC, date_added DESC "
+                 "LIMIT 1 ")
 
         values = '%' + title + '%'
 
@@ -121,11 +122,11 @@ class DBHandler:
 
     def get_db_data_by_genre(self, genre: str) -> list[dict] | str:
 
-        query = ("SELECT `title`, `date_added`, `listed_in`, `description`, `release_year` "
+        query = ("SELECT `title`, `date_added`, `listed_in` AS genre, `description`, `release_year` "
                  "FROM netflix "
-                 "WHERE `listed_in` IS NOT '' "
-                 "AND `listed_in` IS NOT NULL "
-                 "AND `listed_in` LIKE '%s' "
+                 "WHERE `genre` IS NOT '' "
+                 "AND `genre` IS NOT NULL "
+                 "AND `genre` LIKE '%s' "
                  "AND `type` = 'Movie' "
                  "ORDER BY `release_year` DESC, date_added DESC "
                  "LIMIT 10 ")
