@@ -1,3 +1,4 @@
 DEBUG = True
 DB_PATH = "netflix.db"
 JSON_AS_ASCII = False
+JSONIFY_PRETTYPRINT_REGULAR = True

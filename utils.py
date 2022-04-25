@@ -98,14 +98,15 @@ class DBHandler:
                 rating_list = "'" + "', '".join(allowed_user_groups[rating]) + "'"
                 query = ("SELECT `title`, `rating`, `description` "
                          "FROM netflix "
-                         f"WHERE `rating` IN ({rating_list}) "  # TODO idk how to implemet it without f-string (%s and ? doesn't work)
+                         f"WHERE `rating` IN ({rating_list}) "
                          "AND `type` = 'Movie' "
                          "LIMIT 100 ")
                 values = None
             else:
                 raise ValueError
         except ValueError:
-            return "<H1 style='font-family: monospace'>Rating or rating group not found in database. Or you just tried SQL-injection. This is not good.</H1>"
+            return "<H1 style='font-family: monospace'>Rating or rating group not found in database. " \
+                   "Or you just tried SQL-injection. This is not good.</H1>"
 
         db_fetch_result = self.db_connector(query, values)
 
