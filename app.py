@@ -60,5 +60,11 @@ def get_by_type_year_genre(entry_type: str, year: int, genre: str):
     return return_
 
 
+@application.errorhandler(404)
+def page_not_found(e):
+    return "<H1 style='font-family: monospace'>INCORRECT URL</H1><br><br><a style='font-family: monospace; " \
+           "color: brown; text-decoration: none; font-size: 20px; font-weight: 600' href='/'>На главную</a>", 404
+
+
 if __name__ == "__main__":
     application.run(port=8001)
